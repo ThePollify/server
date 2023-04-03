@@ -10,6 +10,6 @@ class Base(DeclarativeBase):
     pass
 
 
-from . import account
+from .account import User
 from . import poll
 from . import statistics

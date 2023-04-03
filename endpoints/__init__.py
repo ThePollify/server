@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from . import dependencies
+
 from . import account
 from . import poll
 from . import statistics

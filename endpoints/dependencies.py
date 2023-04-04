@@ -9,7 +9,10 @@ from models import settings
 
 
 async def user(token: Annotated[str, Header(alias="x-token")]) -> database.User:
-    data = jwt.decode(token, options={"verify_signature": False})
+    try:
+        data = jwt.decode(token, options={"verify_signature": False})
+    except jwt.exceptions.DecodeError:
+        raise HTTPException(401, "Token is invalid")
 
     if "sub" not in data and not isinstance(data["sub"], int):
         raise HTTPException(401, "Token is invalid")

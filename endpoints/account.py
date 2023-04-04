@@ -108,18 +108,22 @@ async def update_username(
     user: dependencies.User,
     update: models.UpdateUsername,
 ) -> None:
+    if len(update.username.strip()) == 0:
+        raise HTTPException(400, "Username must not be empty")
     async with database.sessions.begin() as session:
         session.add(user)
 
         if (
             await session.scalar(
-                select(database.User).where(database.User.username == update.username)
+                select(database.User).where(
+                    database.User.username == update.username.strip()
+                )
             )
             is not None
         ):
             raise HTTPException(400, "User with this username already exists")
 
-        user.username = update.username
+        user.username = update.username.strip()
 
 
 @router.put("/update/password")
@@ -127,11 +131,13 @@ async def update_password(
     user: dependencies.User,
     update: models.UpdatePassword,
 ) -> None:
+    if len(update.password.strip()) == 0:
+        raise HTTPException(400, "Password must not be empty")
     async with database.sessions.begin() as session:
         session.add(user)
 
         user.salt = secrets.token_hex(8)
-        user.password = sha512(update.password, user.salt)
+        user.password = sha512(update.password.strip(), user.salt)
 
 
 @router.delete("/delete")

@@ -11,5 +11,5 @@ class Base(DeclarativeBase):
 
 
 from .account import User
-from . import poll
+from .poll import Poll
 from . import statistics

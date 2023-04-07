@@ -13,8 +13,20 @@ from models import settings
 router = APIRouter(prefix="/account", tags=["accounts", "users"])
 
 
-def sha512(password: str, salt: str) -> str:
+def hash_password(password: str, salt: str) -> str:
     return hashlib.sha512((password + salt).encode("UTF-8")).hexdigest()
+
+
+def token_model(user: database.User) -> models.Token:
+    return models.Token(
+        id=user.id,
+        username=user.username,
+        token=jwt.encode(
+            {"sub": user.id},
+            settings.secret + user.password,
+            "HS256",
+        ),
+    )
 
 
 @router.post("/register")
@@ -36,21 +48,13 @@ async def register(auth: models.Auth) -> models.Token:
 
         user = database.User(
             username=auth.username,
-            password=sha512(auth.password, salt),
+            password=hash_password(auth.password, salt),
             salt=salt,
         )
         session.add(user)
         await session.flush()
 
-        return models.Token(
-            id=user.id,
-            username=user.username,
-            token=jwt.encode(
-                {"sub": user.id},
-                settings.secret + user.password,
-                "HS256",
-            ),
-        )
+        return token_model(user)
 
 
 @router.post("/login")
@@ -60,18 +64,10 @@ async def login(auth: models.Auth) -> models.Token:
             select(database.User).where(database.User.username == auth.username)
         )
 
-        if user is None or user.password != sha512(auth.password, user.salt):
+        if user is None or user.password != hash_password(auth.password, user.salt):
             raise HTTPException(403, "Username or password is invalid")
 
-        return models.Token(
-            id=user.id,
-            username=user.username,
-            token=jwt.encode(
-                {"sub": user.id},
-                settings.secret + user.password,
-                "HS256",
-            ),
-        )
+        return token_model(user)
 
 
 @router.get("/me")
@@ -107,7 +103,7 @@ async def get_by_username(username: str) -> models.User | None:
 async def update_username(
     user: dependencies.User,
     update: models.UpdateUsername,
-) -> None:
+) -> models.User:
     if len(update.username.strip()) == 0:
         raise HTTPException(400, "Username must not be empty")
     async with database.sessions.begin() as session:
@@ -124,23 +120,26 @@ async def update_username(
             raise HTTPException(400, "User with this username already exists")
 
         user.username = update.username.strip()
+        return models.User.from_orm(user)
 
 
 @router.put("/update/password")
 async def update_password(
     user: dependencies.User,
     update: models.UpdatePassword,
-) -> None:
+) -> models.Token:
     if len(update.password.strip()) == 0:
         raise HTTPException(400, "Password must not be empty")
     async with database.sessions.begin() as session:
         session.add(user)
 
         user.salt = secrets.token_hex(8)
-        user.password = sha512(update.password.strip(), user.salt)
+        user.password = hash_password(update.password.strip(), user.salt)
+        return token_model(user)
 
 
 @router.delete("/delete")
-async def delete(user: dependencies.User) -> None:
+async def delete(user: dependencies.User) -> models.User:
     async with database.sessions.begin() as session:
         await session.delete(user)
+        return models.User.from_orm(user)

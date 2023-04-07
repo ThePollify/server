@@ -3,5 +3,12 @@
     "**/.mypy_cache": true,
     "**/.venv": true
   },
-  "cSpell.words": ["async_sessionmake", "ondelete", "pydantic", "sessionmaker"]
+  "cSpell.words": [
+    "async_sessionmake",
+    "fastapi",
+    "ondelete",
+    "pydantic",
+    "sessionmaker",
+    "sqlalchemy"
+  ]
 }

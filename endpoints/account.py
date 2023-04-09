@@ -10,7 +10,7 @@ from endpoints import dependencies
 from models import account as models
 from models import settings
 
-router = APIRouter(prefix="/account", tags=["accounts", "users"])
+router = APIRouter(prefix="/account", tags=["Account"])
 
 
 def hash_password(password: str, salt: str) -> str:
@@ -31,11 +31,6 @@ def token_model(user: database.User) -> models.Token:
 
 @router.post("/register")
 async def register(auth: models.Auth) -> models.Token:
-    if len(auth.username.strip()) == 0:
-        raise HTTPException(400, "Username must not be empty")
-    if len(auth.password.strip()) == 0:
-        raise HTTPException(400, "Password must not be empty")
-
     salt = secrets.token_hex(8)
     async with database.sessions.begin() as session:
         if (
@@ -104,8 +99,6 @@ async def update_username(
     user: dependencies.User,
     update: models.UpdateUsername,
 ) -> models.User:
-    if len(update.username.strip()) == 0:
-        raise HTTPException(400, "Username must not be empty")
     async with database.sessions.begin() as session:
         session.add(user)
 
@@ -128,8 +121,6 @@ async def update_password(
     user: dependencies.User,
     update: models.UpdatePassword,
 ) -> models.Token:
-    if len(update.password.strip()) == 0:
-        raise HTTPException(400, "Password must not be empty")
     async with database.sessions.begin() as session:
         session.add(user)
 

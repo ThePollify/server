@@ -1,9 +1,13 @@
-import pydantic
+import pydantic.generics
+import json
 
 
-class BaseModel(pydantic.BaseModel):
+class BaseModel(pydantic.generics.GenericModel):
     class Config:
         orm_mode = True
+
+    def serializable_dict(self) -> dict:
+        return json.loads(self.json())
 
 
 from .settings import settings

@@ -1,3 +1,5 @@
+from pydantic import Field
+
 from models import BaseModel
 
 
@@ -7,8 +9,8 @@ class User(BaseModel):
 
 
 class Auth(BaseModel):
-    username: str
-    password: str
+    username: str = Field(min_length=1)
+    password: str = Field(min_length=1)
 
 
 class Token(BaseModel):
@@ -18,8 +20,8 @@ class Token(BaseModel):
 
 
 class UpdateUsername(BaseModel):
-    username: str
+    username: str = Field(min_length=1)
 
 
 class UpdatePassword(BaseModel):
-    password: str
+    password: str = Field(min_length=1)

@@ -1,9 +1,9 @@
 from enum import Enum, auto
 from typing import Any, TypeAlias
 
-from pydantic import validator
+from pydantic import Field, validator
 
-from models import BaseModel
+from models import BaseModel, account
 
 
 class QuestionType(Enum):
@@ -15,9 +15,10 @@ class QuestionType(Enum):
 
 class BaseQuestion(BaseModel):
     question_type: QuestionType
-    label: str
-    description: str | None = None
+    label: str = Field(min_length=1)
+    description: str | None = Field(None, min_length=1)
     image: str | None = None
+    hide_results: bool = False
 
 
 class Option(BaseModel):
@@ -35,7 +36,7 @@ class BaseOptionQuestion(BaseQuestion):
         values: dict[str, Any],
         **kwargs: Any,
     ) -> list[Option]:
-        assert len(value) >= 1, "len(options) >= 1"
+        assert len(value) >= 2, "len(options) >= 2"
         return value
 
 
@@ -44,15 +45,17 @@ class SelectorQuestion(BaseOptionQuestion):
     max_checked: int | None
 
     @validator("max_checked")
-    def object_validator(
+    def max_checked_validator(
         cls,
         value: int | None,
         values: dict[str, Any],
         **kwargs: Any,
     ) -> int | None:
         assert (
-            value is None or "options" not in values or value <= len(values["options"])
-        ), "max_checked <= len(options)"
+            value is None
+            or "options" not in values
+            or 1 <= value <= len(values["options"])
+        ), "1 <= max_checked <= len(options)"
         return value
 
 
@@ -86,9 +89,9 @@ class SliderQuestion(BaseOptionQuestion):
             or "max_value" not in values
             or (
                 values["min_value"] <= value <= values["max_value"]
-                and value % (values["max_value"] - values["min_value"]) == 0
+                and (values["max_value"] - values["min_value"]) % value == 0
             )
-        ), "min_value <= step <= max_value and value % (max_value - min_value) == 0"
+        ), "min_value <= step <= max_value and (max_value - min_value) % step == 0"
         return value
 
 
@@ -144,9 +147,8 @@ class PlotType(Enum):
 
 class BasePlot(BaseModel):
     plot_type: PlotType
-    name: str
+    name: str = Field(min_length=1)
     questions: list[Question] = []
-    hide_results: bool = False
 
     @validator("questions")
     def questions_validator(
@@ -217,11 +219,21 @@ Plot: TypeAlias = (
 
 
 class PollSchema(BaseModel):
-    name: str
+    name: str = Field(min_length=1)
     plots: list[Plot] = []
+
+    @validator("plots")
+    def plots_validator(
+        cls,
+        value: list[Option],
+        values: dict[str, Any],
+        **kwargs: Any,
+    ) -> list[Option]:
+        assert len(value) >= 1, "len(plots) >= 1"
+        return value
 
 
 class Poll(BaseModel):
     id: int
-    name: str
+    owner: account.User
     poll: PollSchema

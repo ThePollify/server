@@ -11,4 +11,4 @@ class Poll(Base):
     name: Mapped[str]
     poll: Mapped[dict] = mapped_column(JSON)
 
-    owner: Mapped[User] = relationship(User)
+    owner: Mapped[User] = relationship(User, lazy="joined")

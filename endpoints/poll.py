@@ -12,7 +12,7 @@ router = APIRouter(prefix="/poll", tags=["Poll"])
 
 
 @router.post("/add")
-async def add_poll(
+async def add(
     user: dependencies.User,
     poll_schema: models.PollSchema,
 ) -> models.Poll:

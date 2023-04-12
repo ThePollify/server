@@ -8,7 +8,7 @@ from sqlalchemy import select
 import database
 from endpoints import dependencies
 from models import account as models
-from models import settings
+from settings import settings
 
 router = APIRouter(prefix="/account", tags=["Account"])
 

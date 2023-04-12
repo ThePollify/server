@@ -5,7 +5,7 @@ from fastapi import Depends, Header, HTTPException
 from sqlalchemy import select
 
 import database
-from models import settings
+from settings import settings
 
 
 async def user(token: Annotated[str, Header(alias="x-token")]) -> database.User:

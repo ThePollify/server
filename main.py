@@ -5,6 +5,7 @@ from fastapi import FastAPI
 
 # isort: off
 
+import settings
 import models
 import database
 import endpoints
@@ -22,4 +23,4 @@ async def init() -> None:
         await connection.run_sync(database.Base.metadata.create_all)
 
 
-uvicorn.run(app, host="0.0.0.0", port=models.settings.port)
+uvicorn.run(app, host="0.0.0.0", port=settings.settings.port)

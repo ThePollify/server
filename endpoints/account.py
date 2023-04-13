@@ -23,7 +23,7 @@ def token_model(user: database.User) -> models.Token:
         username=user.username,
         token=jwt.encode(
             {"sub": user.id},
-            settings.secret + user.password,
+            settings.secret,
             "HS256",
         ),
     )

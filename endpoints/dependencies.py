@@ -26,7 +26,7 @@ async def user(token: Annotated[str, Header(alias="x-token")]) -> database.User:
             raise HTTPException(401, "Token is invalid")
 
         try:
-            jwt.decode(token, settings.secret + user.password, algorithms=["HS256"])
+            jwt.decode(token, settings.secret, algorithms=["HS256"])
         except jwt.exceptions.InvalidSignatureError:
             raise HTTPException(401, "Token is invalid")
 

@@ -20,7 +20,7 @@ async def add(
         poll = database.Poll(
             owner_id=user.id,
             name=poll_schema.name,
-            poll=poll_schema.serializable_dict(),
+            poll=poll_schema.serializable(),
         )
 
         session.add(poll)
@@ -86,7 +86,7 @@ async def update(
             raise HTTPException(405, "You are not the owner of this poll")
 
         poll.name = poll_schema.name
-        poll.poll = poll_schema.serializable_dict()
+        poll.poll = poll_schema.serializable()
         await session.flush()
 
         return models.Poll.from_orm(poll)

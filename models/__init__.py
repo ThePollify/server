@@ -6,7 +6,7 @@ class BaseModel(pydantic.generics.GenericModel):
     class Config:
         orm_mode = True
 
-    def serializable_dict(self) -> dict:
+    def serializable(self) -> dict:
         return json.loads(self.json())
 
 

@@ -57,6 +57,7 @@ class TopListValue(BaseValue):
         assert (
             question.min_ranks <= len(self.ranks) <= max_ranks
         ), f"{question.min_ranks} <= len(ranks) <= {max_ranks}"
+        assert len(self.ranks) == len(set(self.ranks)), "All ranks must be unique"
         assert all(
             [0 <= rank < len(question.options) for rank in self.ranks]
         ), f"0 <= rank < {len(question.options)}"

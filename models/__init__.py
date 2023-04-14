@@ -10,8 +10,6 @@ class BaseModel(pydantic.generics.GenericModel):
         return json.loads(self.json())
 
 
-from .settings import settings
-
 from . import account
 from . import poll
-from . import statistics
+from . import answers

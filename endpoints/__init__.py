@@ -4,9 +4,9 @@ from . import dependencies
 
 from . import account
 from . import poll
-from . import statistics
+from . import answers
 
 router = APIRouter()
 router.include_router(account.router)
 router.include_router(poll.router)
-router.include_router(statistics.router)
+router.include_router(answers.router)

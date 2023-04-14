@@ -34,4 +34,11 @@ async def user(token: Annotated[str, Header(alias="x-token")]) -> database.User:
         return user
 
 
+async def optional_user(
+    token: str | None = Header(None, alias="x-token"),
+) -> database.User | None:
+    return await user(token) if token is not None else token
+
+
 User = Annotated[database.User, Depends(user, use_cache=False)]
+OptionalUser = Annotated[database.User | None, Depends(optional_user, use_cache=False)]

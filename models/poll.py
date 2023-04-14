@@ -1,5 +1,6 @@
 from enum import Enum, auto
 from typing import Any, TypeAlias
+from uuid import UUID, uuid4
 
 from pydantic import Field, validator
 
@@ -14,6 +15,7 @@ class QuestionType(Enum):
 
 
 class BaseQuestion(BaseModel):
+    question_id: UUID = Field(default_factory=uuid4)
     question_type: QuestionType
     label: str = Field(min_length=1)
     description: str | None = Field(None, min_length=1)
@@ -42,7 +44,8 @@ class BaseOptionQuestion(BaseQuestion):
 
 class SelectorQuestion(BaseOptionQuestion):
     question_type = QuestionType.selector
-    max_checked: int | None
+    min_checked: int = 1
+    max_checked: int | None = None
 
     @validator("max_checked")
     def max_checked_validator(
@@ -54,8 +57,9 @@ class SelectorQuestion(BaseOptionQuestion):
         assert (
             value is None
             or "options" not in values
-            or 1 <= value <= len(values["options"])
-        ), "1 <= max_checked <= len(options)"
+            or "min_checked" not in values
+            or values["min_checked"] <= value <= len(values["options"])
+        ), "min_checked <= max_checked <= len(options)"
         return value
 
 
@@ -63,7 +67,6 @@ class SliderQuestion(BaseOptionQuestion):
     question_type = QuestionType.slider
     min_value: int = 1
     max_value: int = 5
-    step: int = 1
 
     @validator("max_value")
     def max_value_validator(
@@ -77,38 +80,25 @@ class SliderQuestion(BaseOptionQuestion):
         ), "max_value > min_value"
         return value
 
-    @validator("step")
-    def step_validator(
-        cls,
-        value: int,
-        values: dict[str, Any],
-        **kwargs: Any,
-    ) -> int:
-        assert (
-            "min_value" not in values
-            or "max_value" not in values
-            or (
-                values["min_value"] <= value <= values["max_value"]
-                and (values["max_value"] - values["min_value"]) % value == 0
-            )
-        ), "min_value <= step <= max_value and (max_value - min_value) % step == 0"
-        return value
-
 
 class TopListQuestion(BaseOptionQuestion):
     question_type = QuestionType.top_list
-    ranks: int | None = None
+    min_ranks: int = 1
+    max_ranks: int | None = None
 
-    @validator("ranks")
-    def ranks_validator(
+    @validator("max_ranks")
+    def max_ranks_validator(
         cls,
         value: int | None,
         values: dict[str, Any],
         **kwargs: Any,
     ) -> int | None:
         assert (
-            value is None or "options" not in values or value <= values["options"]
-        ), "ranks <= len(options)"
+            value is None
+            or "options" not in values
+            or "min_ranks" not in values
+            or values["min_ranks"] <= value <= len(values["options"])
+        ), "min_ranks <= max_ranks <= len(options)"
         return value
 
 
@@ -128,8 +118,8 @@ class TextQuestion(BaseQuestion):
             value is None
             or "min_length" not in values
             or values["min_length"] is None
-            or value > values["min_length"]
-        ), "max_length > min_length"
+            or values["min_length"] < value
+        ), "min_length < max_length"
         return value
 
 
@@ -150,6 +140,10 @@ class BasePlot(BaseModel):
     name: str = Field(min_length=1)
     questions: list[Question] = []
 
+    @property
+    def uuids(self) -> dict[UUID, Question]:
+        return {q.question_id: q for q in self.questions}
+
     @validator("questions")
     def questions_validator(
         cls,
@@ -160,10 +154,15 @@ class BasePlot(BaseModel):
         assert len(value) >= 1, "len(questions) >= 1"
 
         question_type = value[0].question_type
+        uuids = {value[0].question_id}
         for question in value[1:]:
             assert (
                 question.question_type == question_type
             ), "All questions must be of the same type"
+            assert (
+                question.question_id not in uuids
+            ), "All questions must be have different id's"
+            uuids.add(question.question_id)
 
         return value
 
@@ -222,14 +221,25 @@ class PollSchema(BaseModel):
     name: str = Field(min_length=1)
     plots: list[Plot] = []
 
+    @property
+    def uuids(self) -> dict[UUID, Question]:
+        return {u: q for p in self.plots for u, q in p.uuids.items()}
+
     @validator("plots")
     def plots_validator(
         cls,
-        value: list[Option],
+        value: list[Plot],
         values: dict[str, Any],
         **kwargs: Any,
-    ) -> list[Option]:
+    ) -> list[Plot]:
         assert len(value) >= 1, "len(plots) >= 1"
+        uuids = set()
+        for plots in value:
+            for question in plots.questions:
+                assert (
+                    question.question_id not in uuids
+                ), "All questions must be have different id's"
+                uuids.add(question.question_id)
         return value
 
 

@@ -1,5 +1,3 @@
-from json import loads
-
 from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import and_, select
 

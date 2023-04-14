@@ -12,4 +12,4 @@ class Base(DeclarativeBase):
 
 from .account import User
 from .poll import Poll
-from . import statistics
+from .answers import Answer

@@ -1,5 +1,5 @@
-from enum import Enum, auto
-from typing import Any, TypeAlias
+from enum import IntEnum, auto
+from typing import Any, Literal, TypeAlias
 from uuid import UUID, uuid4
 
 from pydantic import Field, validator
@@ -7,7 +7,7 @@ from pydantic import Field, validator
 from models import BaseModel, account
 
 
-class QuestionType(Enum):
+class QuestionType(IntEnum):
     selector = auto()
     slider = auto()
     top_list = auto()
@@ -43,7 +43,7 @@ class BaseOptionQuestion(BaseQuestion):
 
 
 class SelectorQuestion(BaseOptionQuestion):
-    question_type = QuestionType.selector
+    question_type: Literal[QuestionType.selector] = QuestionType.selector
     min_checked: int = 1
     max_checked: int | None = None
 
@@ -64,7 +64,7 @@ class SelectorQuestion(BaseOptionQuestion):
 
 
 class SliderQuestion(BaseOptionQuestion):
-    question_type = QuestionType.slider
+    question_type: Literal[QuestionType.slider] = QuestionType.slider
     min_value: int = 1
     max_value: int = 5
 
@@ -82,7 +82,7 @@ class SliderQuestion(BaseOptionQuestion):
 
 
 class TopListQuestion(BaseOptionQuestion):
-    question_type = QuestionType.top_list
+    question_type: Literal[QuestionType.top_list] = QuestionType.top_list
     min_ranks: int = 1
     max_ranks: int | None = None
 
@@ -103,7 +103,7 @@ class TopListQuestion(BaseOptionQuestion):
 
 
 class TextQuestion(BaseQuestion):
-    question_type = QuestionType.text
+    question_type: Literal[QuestionType.text] = QuestionType.text
     min_length: int | None = None
     max_length: int | None = None
 
@@ -126,7 +126,7 @@ class TextQuestion(BaseQuestion):
 Question: TypeAlias = SelectorQuestion | SliderQuestion | TopListQuestion | TextQuestion
 
 
-class PlotType(Enum):
+class PlotType(IntEnum):
     bar = auto()
     pie = auto()
     doughnut = auto()
@@ -189,27 +189,27 @@ class BaseNumberPlot(BasePlot):
 
 
 class BarPlot(BaseNumberPlot):
-    plot_type = PlotType.bar
+    plot_type: Literal[PlotType.bar] = PlotType.bar
 
 
 class PiePlot(BaseNumberPlot):
-    plot_type = PlotType.pie
+    plot_type: Literal[PlotType.pie] = PlotType.pie
 
 
 class DoughnutPlot(BaseNumberPlot):
-    plot_type = PlotType.doughnut
+    plot_type: Literal[PlotType.doughnut] = PlotType.doughnut
 
 
 class RadarPlot(BaseNumberPlot):
-    plot_type = PlotType.radar
+    plot_type: Literal[PlotType.radar] = PlotType.radar
 
 
 class AreaPlot(BaseNumberPlot):
-    plot_type = PlotType.area
+    plot_type: Literal[PlotType.area] = PlotType.area
 
 
 class WordCloudPlot(BasePlot):
-    plot_type = PlotType.word_cloud
+    plot_type: Literal[PlotType.word_cloud] = PlotType.word_cloud
 
 
 Plot: TypeAlias = (

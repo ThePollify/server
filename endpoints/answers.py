@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, delete, or_, select
 
 import database
 from endpoints import dependencies
@@ -146,6 +146,19 @@ async def get_values(
         ):
             values.extend(answer.answer.values)
         return values
+
+
+@router.delete("/delete")
+async def delete_answers(user: dependencies.User, poll_id: int) -> None:
+    async with database.sessions.begin() as session:
+        await session.execute(
+            delete(database.Answer).where(
+                and_(
+                    database.Answer.poll_id == poll_id,
+                    database.Answer.poll.has(database.Poll.owner_id == user.id),
+                )
+            )
+        )
 
 
 # @router.websocket("/listen/question")

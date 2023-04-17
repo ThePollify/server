@@ -9,6 +9,7 @@
     "ondelete",
     "pydantic",
     "sessionmaker",
-    "sqlalchemy"
+    "sqlalchemy",
+    "websockets"
   ]
 }

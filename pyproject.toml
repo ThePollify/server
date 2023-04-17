@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "pollify"
 version = "0.0.1"
-description = "Service for interactive polls. Web server on flask."
+description = "Service for interactive polls. Web server on fastapi."
 authors = ["Igor Tolmachov <me@igorek.dev>"]
 license = "AGPL-3.0-only"
 readme = "README.md"
 
-homepage = "https://pollify.igorek.dev"
+homepage = "https://pollify.igorek.dev/docs"
 repository = "https://github.com/ThePollify/server"
 
 

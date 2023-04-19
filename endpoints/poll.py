@@ -29,16 +29,9 @@ async def add(
 
 
 @router.get("/get/id")
-async def get_by_id(user: dependencies.User, id: int) -> models.Poll | None:
+async def get_by_id(id: int) -> models.Poll | None:
     async with database.sessions.begin() as session:
-        poll = await session.scalar(
-            select(database.Poll).where(
-                and_(
-                    database.Poll.owner_id == user.id,
-                    database.Poll.id == id,
-                )
-            )
-        )
+        poll = await session.scalar(select(database.Poll).where(database.Poll.id == id))
 
         if poll is None:
             return None
@@ -48,7 +41,6 @@ async def get_by_id(user: dependencies.User, id: int) -> models.Poll | None:
 
 @router.get("/get/name")
 async def get_by_name(
-    user: dependencies.User,
     name: str | None = None,
     limit: int = Query(10, ge=1, le=20),
     offset: int = Query(0, ge=0),
@@ -57,12 +49,7 @@ async def get_by_name(
         return await page.paginate(
             session,
             database.Poll,
-            and_(
-                database.Poll.owner_id == user.id,
-                database.Poll.name.contains(name, autoescape=True),
-            )
-            if name is not None
-            else database.Poll.owner_id == user.id,
+            database.Poll.name.contains(name, autoescape=True),
             limit,
             offset,
             models.Poll,

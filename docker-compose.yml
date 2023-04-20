@@ -9,6 +9,7 @@ services:
       - DATABASE=postgresql+asyncpg://${DATABASE_USER}:${DATABASE_PASSWORD}@pollify-database:5432/${DATABASE_NAME}
       - SECRET=${SECRET}
       - PORT=${PORT}
+      - ROOT_PATH=${ROOT_PATH}
     ports:
       - ${PORT}:${PORT}
     depends_on:

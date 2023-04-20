@@ -23,4 +23,9 @@ async def init() -> None:
         await connection.run_sync(database.Base.metadata.create_all)
 
 
-uvicorn.run(app, host="0.0.0.0", port=settings.settings.port)
+uvicorn.run(
+    app,
+    host="0.0.0.0",
+    port=settings.settings.port,
+    root_path=settings.settings.root_path,
+)

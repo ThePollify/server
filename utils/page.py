@@ -37,6 +37,9 @@ async def paginate(
         - 1
     )
 
+    if total < 0:
+        total = 0
+
     if offset > total:
         raise HTTPException(400, f"Offset can't be more than {total}")
 

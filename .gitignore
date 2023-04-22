@@ -127,3 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Files storage
+files/**
+
+# Keep empty dirs
+!**/.keep

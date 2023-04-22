@@ -1,8 +1,12 @@
 import hashlib
+import os
 import secrets
+from typing import Annotated
 
 import jwt
-from fastapi import APIRouter, HTTPException
+from aiofiles import open
+from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy import select
 
 import database
@@ -94,6 +98,14 @@ async def get_by_username(username: str) -> models.User | None:
         return models.User.from_orm(user)
 
 
+@router.get("/get/image")
+async def get_image(user_id: int) -> FileResponse:
+    path = f"./files/{user_id}-avatar.png"
+    if not os.path.exists(path):
+        return FileResponse("./static/no-avatar.png", filename="avatar.png")
+    return FileResponse(path, filename="avatar.png")
+
+
 @router.put("/update/username")
 async def update_username(
     user: dependencies.User,
@@ -127,6 +139,20 @@ async def update_password(
         user.salt = secrets.token_hex(8)
         user.password = hash_password(update.password.strip(), user.salt)
         return token_model(user)
+
+
+@router.put("/update/image")
+async def update_image(
+    user: dependencies.User,
+    file: Annotated[UploadFile, File()],
+) -> None:
+    if file.size is None or file.size > 524288:
+        raise HTTPException(400, "The file is to large. Max size 512KiB")
+    if file.filename is None or not file.filename.endswith(".png"):
+        raise HTTPException(400, "Unsupported file type. Only png files are allowed.")
+
+    async with open(f"./files/{user.id}-avatar.png", "wb") as sys_file:
+        await sys_file.write(await file.read())
 
 
 @router.delete("/delete")

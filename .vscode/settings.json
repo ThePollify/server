@@ -4,6 +4,7 @@
     "**/.venv": true
   },
   "cSpell.words": [
+    "aiofiles",
     "async_sessionmake",
     "fastapi",
     "ondelete",

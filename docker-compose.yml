@@ -10,6 +10,8 @@ services:
       - SECRET=${SECRET}
       - PORT=${PORT}
       - ROOT_PATH=${ROOT_PATH}
+    volumes:
+      - pollify-files:/app/files
     ports:
       - ${PORT}:${PORT}
     depends_on:
@@ -28,3 +30,4 @@ services:
 
 volumes:
   pollify-database:
+  pollify-files:

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   id="svg5"
+   version="1.1"
+   viewBox="0 0 512 512"
+   height="512"
+   width="512"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="no-avatar.svg"
+   inkscape:export-filename="no-avatar.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="73.5"
+     inkscape:cy="289.5"
+     inkscape:window-width="1280"
+     inkscape:window-height="659"
+     inkscape:window-x="256"
+     inkscape:window-y="82"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="main"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;fill-rule:evenodd;stroke:#4ab563;stroke-width:50.0002;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:normal;fill-opacity:1"
+       id="rect234"
+       width="461.99985"
+       height="461.99988"
+       x="25.000076"
+       y="25.000051"
+       ry="230.99992"
+       inkscape:label="bg" />
+    <g
+       id="g1018"
+       inkscape:label="user">
+      <circle
+         style="fill:#5a9cfe;fill-rule:evenodd;stroke:none;stroke-width:50;stroke-linecap:round;stroke-linejoin:round"
+         id="path950"
+         cx="256"
+         cy="150"
+         r="75"
+         inkscape:label="head" />
+      <rect
+         style="fill:#af83f8;fill-rule:evenodd;stroke:none;stroke-width:59.3788;stroke-linecap:round;stroke-linejoin:round"
+         id="rect1004"
+         width="300"
+         height="150"
+         x="106.00001"
+         y="250"
+         ry="75"
+         inkscape:label="body" />
+    </g>
+  </g>
+</svg>
